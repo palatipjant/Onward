@@ -8,14 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var showAddSheet = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack{
+            ScrollView{
+                
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showAddSheet.toggle()
+                    }, label: {
+                        Image(systemName: "plus")
+                            .resizable()
+                            .imageScale(.large)
+                    })
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Home")
+                        .font(.title)
+                        .bold()
+                }
+            })
+            .toolbarTitleDisplayMode(.large)
+            .ignoresSafeArea(edges: .top)
+            .scrollIndicators(.hidden)
+            .sheet(isPresented: $showAddSheet, content: {
+                VStack{
+                    Text("fee")
+                }
+            })
         }
-        .padding()
     }
 }
 
