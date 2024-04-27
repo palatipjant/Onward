@@ -9,10 +9,15 @@ import SwiftUI
 
 @main
 struct OnwardApp: App {
+    
+    @StateObject private var manager: DataManager = DataManager()
+    
     var body: some Scene {
         WindowGroup {
             HomeView()
                 .preferredColorScheme(.light)
+                .environmentObject(manager)
+                .environment(\.managedObjectContext, manager.container.viewContext)
         }
     }
 }

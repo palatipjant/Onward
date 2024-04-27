@@ -9,6 +9,10 @@ import SwiftUI
 
 struct AddItemView: View {
     
+    @EnvironmentObject var manager: DataManager
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(sortDescriptors: []) private var companyItems: FetchedResults<Company>
+    
     @Environment(\.dismiss) var dismiss
     @Binding var isShowAddSheet: Bool
     
@@ -17,10 +21,11 @@ struct AddItemView: View {
     @State var itemJobType = "Type"
     @State var itemStatus = "Select"
     @State var itemAppliedDate = Date()
-    @State var itemColor = Color(.red)
+    @State var itemColor = "Red"
     
     let JobType = ["Full-Time", "Part-Time", "Intern"]
     let Status = ["Select", "Applied", "Review", "Interview", "Accept", "Reject"]
+    let colorName = ["Red", "Blue", "Purple", "Gray", "Pink", "Yellow"]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 25) {
@@ -73,9 +78,21 @@ struct AddItemView: View {
                 }
                 .pickerStyle(.menu)
             }
-            ColorPicker("Color", selection: $itemColor, supportsOpacity: false)
-                .foregroundStyle(.gray)
+            
+            HStack {
+                Text("Color")
+                    .foregroundStyle(.gray)
+                Spacer()
+                Picker("Color", selection: $itemColor) {
+                    ForEach(colorName, id: \.self) { color in
+                        Text(color).tag(color)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+            
             Button(action: {
+                addItem()
                 dismiss()
                 itemCompanyTitle = ""
                 itemJobType = "Type"
@@ -103,6 +120,17 @@ struct AddItemView: View {
         }
         .padding()
         .padding(.top,20)
+    }
+    private func addItem() {
+        let newCompanyItem = Company(context: viewContext)
+        newCompanyItem.id = UUID()
+        newCompanyItem.companyName = itemCompanyTitle
+        newCompanyItem.jobRole = itemRole
+        newCompanyItem.jobType = itemJobType
+        newCompanyItem.applyDate = itemAppliedDate
+        newCompanyItem.jobStatus = itemStatus
+        newCompanyItem.color = itemColor
+        try? viewContext.save()
     }
 }
 

@@ -10,10 +10,23 @@ import SwiftUI
 struct HomeView: View {
     
     @State var isShowAddSheet = false
+    @EnvironmentObject var manager: DataManager
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(sortDescriptors: []) private var companyItems: FetchedResults<Company>
     
     var body: some View {
         NavigationStack{
             ScrollView{
+                    ForEach(companyItems) { item in
+                        VStack {
+                            Text(item.companyName ?? "Not Found")
+                            Text(item.jobRole ?? "Not Found")
+                            Text(item.jobType ?? "Not Found")
+                            Text("\(item.applyDate!, style: .date)")
+                            Text(item.color ?? "Not Found")
+                            Text(item.jobStatus ?? "Not Found")
+                        }
+                    }
                 
             }
             .toolbar{
