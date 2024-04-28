@@ -16,12 +16,7 @@ struct AddItemView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var isShowAddSheet: Bool
     
-    @State var itemCompanyTitle = ""
-    @State var itemRole = ""
-    @State var itemJobType = "Type"
-    @State var itemStatus = "Select"
-    @State var itemAppliedDate = Date()
-    @State var itemColor = "Red"
+    @ObservedObject var viewModel = AddItemViewModel()
     
     let JobType = ["Full-Time", "Part-Time", "Intern"]
     let Status = ["Select", "Applied", "Review", "Interview", "Accept", "Reject"]
@@ -31,7 +26,7 @@ struct AddItemView: View {
         VStack(alignment: .leading, spacing: 25) {
             
             HStack {
-                TextField("Company Name", text: $itemCompanyTitle)
+                TextField("Company Name", text: $viewModel.itemCompanyTitle)
                     .frame(height: 50)
                     .background(.white)
                     .font(.title.weight(.bold))
@@ -39,10 +34,10 @@ struct AddItemView: View {
                 Spacer()
                 Button(action: {
                     dismiss()
-                    itemCompanyTitle = ""
-                    itemJobType = "Type"
-                    itemStatus = "Select"
-                    itemAppliedDate = Date()
+                    viewModel.itemCompanyTitle = ""
+                    viewModel.itemJobType = "Type"
+                    viewModel.itemStatus = "Select"
+                    viewModel.itemAppliedDate = Date()
                 }, label: {
                     Image(systemName: "xmark")
                         .resizable()
@@ -52,26 +47,26 @@ struct AddItemView: View {
                 })
             }
             
-            TextField("Role", text: $itemRole)
+            TextField("Role", text: $viewModel.itemRole)
                 .frame(height: 35)
                 .background(.white)
                 .font(.title3.weight(.medium))
                 .autocorrectionDisabled(true)
             
-            Picker("Job Type", selection: $itemJobType) {
+            Picker("Job Type", selection: $viewModel.itemJobType) {
                 ForEach(JobType, id: \.self) { type in
                     Text(type).tag(type)
                 }
             }
             .pickerStyle(.segmented)
-            DatePicker("Applied Date", selection: $itemAppliedDate, displayedComponents: .date)
+            DatePicker("Applied Date", selection: $viewModel.itemAppliedDate, displayedComponents: .date)
                 .datePickerStyle(.automatic)
                 .foregroundStyle(.gray)
             HStack {
                 Text("Status")
                     .foregroundStyle(.gray)
                 Spacer()
-                Picker("Status", selection: $itemStatus) {
+                Picker("Status", selection: $viewModel.itemStatus) {
                     ForEach(Status, id: \.self) { status in
                         Text(status).tag(status)
                     }
@@ -83,7 +78,7 @@ struct AddItemView: View {
                 Text("Color")
                     .foregroundStyle(.gray)
                 Spacer()
-                Picker("Color", selection: $itemColor) {
+                Picker("Color", selection: $viewModel.itemColor) {
                     ForEach(colorName, id: \.self) { color in
                         Text(color).tag(color)
                     }
@@ -94,10 +89,10 @@ struct AddItemView: View {
             Button(action: {
                 addItem()
                 dismiss()
-                itemCompanyTitle = ""
-                itemJobType = "Type"
-                itemStatus = "Select"
-                itemAppliedDate = Date()
+                viewModel.itemCompanyTitle = ""
+                viewModel.itemJobType = "Type"
+                viewModel.itemStatus = "Select"
+                viewModel.itemAppliedDate = Date()
             }, label: {
                 RoundedRectangle(cornerRadius: 16)
                     .frame(height: 50)
@@ -124,16 +119,16 @@ struct AddItemView: View {
     private func addItem() {
         let newCompanyItem = Company(context: viewContext)
         newCompanyItem.id = UUID()
-        newCompanyItem.companyName = itemCompanyTitle
-        newCompanyItem.jobRole = itemRole
-        newCompanyItem.jobType = itemJobType
-        newCompanyItem.applyDate = itemAppliedDate
-        newCompanyItem.jobStatus = itemStatus
-        newCompanyItem.color = itemColor
+        newCompanyItem.companyName = viewModel.itemCompanyTitle
+        newCompanyItem.jobRole = viewModel.itemRole
+        newCompanyItem.jobType = viewModel.itemJobType
+        newCompanyItem.applyDate = viewModel.itemAppliedDate
+        newCompanyItem.jobStatus = viewModel.itemStatus
+        newCompanyItem.color = viewModel.itemColor
         try? viewContext.save()
     }
 }
 
-#Preview {
-    AddItemView(isShowAddSheet: .constant(true))
-}
+//#Preview {
+//    AddItemView(isShowAddSheet: .constant(true))
+//}
